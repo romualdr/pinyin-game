@@ -52,27 +52,58 @@ io.http.on('get', '/api/logout', function (params, callback, session) {
 	return callback(null, { ok: true });
 });
 
-io.http.on('get', '/api/words', function (params, callback) {
-	return CHARACTERS.findAll({ limit: params.limit, start: params.start, count: true }, callback);
-});
-
-// Word API
+// USER API
 
 io.http.use(function (params, callback, session) {
 	async.waterfall([
 		function (next) {
 			if (!session || !session.user || !session.user.id) return next(true);
-			USERS.get(session.user.id, next);
+			return USERS.get(session.user.id, next);
 		},
 		function (user, next) {
-			if (user.rank !== "admin") return next(true);
 			session.user = user;
 			return next(null); 
+		}
+	], function (err) {
+		if (err) return callback("You are not logged in.");
+		return callback(null);
+	});
+});
+
+var _scores = {};
+
+io.http.on('post', '/api/score', {
+	score: { type: 'number' }
+}, function (params, callback) {
+	async.waterfall([
+		function (next) {
+			return CHARACTERS.find({ character: params.character }, next);
+		},
+		function (results, next) {
+			if (results.hits.length) return next("Already exists");
+			params.english = params.english.toLowerCase();
+			params.pinyin = params.pinyin.toLowerCase();
+			return CHARACTERS.save(params, next);
+		}
+	], callback);
+});
+
+// ADMIN API
+
+io.http.use(function (params, callback, session) {
+	async.waterfall([
+		function (next) {
+			if (!session || !session.user || !session.user.id || session.user.rank !== "admin") return next(true);
+			return next(null);
 		}
 	], function (err) {
 		if (err) return callback("Unauthorized access");
 		return callback(null);
 	});
+});
+
+io.http.on('get', '/api/words', function (params, callback) {
+	return CHARACTERS.findAll({ limit: params.limit, start: params.start, count: true }, callback);
 });
 
 io.http.on('post', '/api/word', {
