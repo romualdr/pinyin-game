@@ -52,6 +52,10 @@ io.http.on('get', '/api/logout', function (params, callback, session) {
 	return callback(null, { ok: true });
 });
 
+io.http.on('get', '/api/words', function (params, callback) {
+	return CHARACTERS.findAll({ limit: params.limit, start: params.start, count: true }, callback);
+});
+
 // USER API
 
 io.http.use(function (params, callback, session) {
@@ -100,10 +104,6 @@ io.http.use(function (params, callback, session) {
 		if (err) return callback("Unauthorized access");
 		return callback(null);
 	});
-});
-
-io.http.on('get', '/api/words', function (params, callback) {
-	return CHARACTERS.findAll({ limit: params.limit, start: params.start, count: true }, callback);
 });
 
 io.http.on('post', '/api/word', {
