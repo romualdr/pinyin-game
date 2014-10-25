@@ -2,7 +2,7 @@ var async = require('async');
 global.io = new (require('./modules/io-core'))({
 	plugins: ['http', 'socket', 'session', 'static'],
 	http: {
-		port: 1338
+		port: process.env.PORT || 1338
 	}
 });
 global.Database = require('./modules/database');
