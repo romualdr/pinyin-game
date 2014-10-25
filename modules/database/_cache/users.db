@@ -1,0 +1,3 @@
+{"username":"DaFunix","password":"12345678","rank":"admin","_id":"C0KSdN2URWBVwEoo"}
+{"username":"ruben","password":"12345678","rank":"member","_id":"N6uGJvPjZy9tWw8r"}
+{"$$indexCreated":{"fieldName":"username","unique":false,"sparse":false}}

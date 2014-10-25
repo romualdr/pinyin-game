@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pinyin Game</title>
+	<link rel="stylesheet" type="text/css" href="/vendor/vendor.css">
+
+	<link rel="stylesheet" type="text/css" href="/style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> 
+</head>
+<body ng-app="game">
+	<div ng-controller="MainController" class="game-wrapper">
+		<!-- Loading screen -->
+		<div class="loading {{ (isLoading ? 'show' : '') }}">
+		  <div class="spinner-wrapper">
+		    <span class="spinner"></span>
+		    <span class="spinner-text">Chargement</span>
+		  </div>
+		</div>
+
+		<!-- Login -->
+		<div class="scene {{ (!scene ? 'show' : '') }}">
+			<h1 class="hud-text">Pinyin Game</h1>
+			<form class="form" ng-submit="doLogin()">
+				<label>Username</label>
+				<input type="text" ng-model="username"/>
+				<label>Password</label>
+				<input type="password" ng-model="password" />
+				<button class="nephritis-flat-button">Go</button>
+			</form>
+		</div>
+
+		<!-- Menu -->
+		<div class="scene {{ (scene === 1 ? 'show' : '') }}">
+			<h1 class="hud-text">Pinyin Game</h1>
+			<button class="turquoise-flat-button" ng-click="launchScene(2)">Play</button>
+			<button class="alizarin-flat-button" ng-show="isAdmin" ng-click="launchScene(4)">Administration</button>
+		</div>
+
+		<!-- Game -->
+		<div class="scene {{ (scene === 2 ? 'show' : '') }}" ng-controller="GameController">
+			<span class="hud-text" style="position: absolute; left:0; font-size: 1em;">Score: {{ score }}</span>
+			<p class="character">{{ character.character }}</p>
+			<p class="heading small">pinyin</p>
+			<ul class="props">
+				<li ng-repeat="item in questions.first" class="{{ select[2] === $index ? 'nephritis-flat-button' : (select[0] === $index ? 'orange-flat-button' : 'clouds-flat-button') }}" ng-click="(!waiting ? (select[0] = $index) : '')">{{item}}</li>
+			</ul>
+			<p class="heading small">English</p>
+			<ul class="props">
+				<li ng-repeat="item in questions.second" class="{{ select[3] === $index ? 'nephritis-flat-button' : (select[1] === $index ? 'orange-flat-button' : 'clouds-flat-button') }}" ng-click="(!waiting ? (select[1] = $index) : '')">{{item}}</li>
+			</ul>
+			<button class="belize-hole-flat-button" ng-click="validate()">Validate</button>
+		</div>
+
+		<!-- Highscore / Achievements ? -->
+		<div class="scene {{ (scene === 3 ? 'show' : '') }}" ng-controller="HighscoreController">
+			<h1 class="hud-text">Pinyin Game</h1>
+			<p class="heading small">Final score</p>
+			<h2 class="hud-text">{{ score }}</h2>
+			<button class="turquoise-flat-button" ng-click="launchScene(1)">Ok</button>
+		</div>
+
+		<!-- Admin menu -->
+		<div class="scene {{ (scene === 4 ? 'show' : '') }}">
+			<h1 class="hud-text" ng-click="launchScene(1)">
+				<img src="/vendor/arrow.png" style="float: left; height: 50px; margin-top: 10px;"/>
+				Pinyin Game
+			</h1>
+			<p>Administration</p>
+			<button class="turquoise-flat-button" ng-click="launchScene(5)">Add a character</button>
+		</div>
+
+		<!-- Add character -->
+		<div class="scene {{ (scene === 5 ? 'show' : '') }}" ng-controller="AdminCharacter">
+			<h1 class="hud-text" ng-click="launchScene(1)">
+				<img src="/vendor/arrow.png" style="float: left; height: 50px; margin-top: 10px;"/>
+				Pinyin Game
+			</h1>
+			<p>Add a character</p>
+			<form class="form" ng-submit="saveChar()">
+				<label>Character</label>
+				<input type="text" ng-model="character" />
+				<label>Pinyin</label>
+				<input type="text" ng-model="pinyin" />
+				<label>English</label>
+				<input type="text" ng-model="english" />
+				<button class="carrot-flat-button">Save</button>
+			</form>
+		</div>
+	</div>
+</body>
+<script src="/vendor/angular.min.js"></script>
+<script src="/app/app.js"></script>
+<script src="/app/services/ApiService.js"></script>
+<script src="/app/services/UserService.js"></script>
+<script src="/app/services/RandomService.js"></script>
+<script src="/app/main.js"></script>
+<script src="/app/a_add.js"></script>
+<script src="/app/highscore.js"></script>
+<script src="/app/game.js"></script>
+</html>
